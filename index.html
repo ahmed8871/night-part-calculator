@@ -4,34 +4,263 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حساب أسداس الليل</title>
+    <!-- تحميل الخط Rubik من Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
+            font-family: 'Rubik', sans-serif;
+            background-color: #ecf0f1;  /* الخلفية الفاتحة */
+            color: #34495e;  /* النصوص الداكنة لسهولة القراءة */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            height: 100%;
+            padding: 0 20px;
             text-align: center;
+            direction: rtl; /* محاذاة النصوص لليمين */
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-weight: 700;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* تأثير fade-in عند تحميل الصفحة */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             margin: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 1s ease-in-out;
         }
+
+        label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            display: block;
+        }
+
         input, button {
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
+            padding: 12px;
+            font-size: 18px;
+            margin-bottom: 20px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            outline: none;
+            transition: all 0.3s ease;
         }
-        .results {
+
+        input:focus, button:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 8px rgba(41, 128, 185, 0.3);
+            transform: scale(1.05);  /* إضافة تأثير تكبير عند التمرير */
+        }
+
+        button {
+            background-color: #3498db;  /* أزرار زرقاء رائعة */
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Rubik', sans-serif;
+        }
+
+        button:hover {
+            background-color: #2980b9;  /* ظل أزرق داكن عند التمرير */
+            transform: scale(1.05);  /* إضافة تأثير تكبير */
+        }
+
+        .result {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .result h3 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
         }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #2980b9;
+            color: white;
+        }
+
+        td {
+            background-color: #fafafa;
+            color: #333;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f4f4f4;
+        }
+
+        #nightDuration {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e74c3c;  /* تغيير اللون إلى الأحمر */
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        /* تحسين التنسيق للأجهزة الصغيرة */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            input, button {
+                padding: 15px;
+                font-size: 16px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            #nightDuration {
+                font-size: 24px;
+            }
+        }
+
     </style>
 </head>
 <body>
-    <h1>حساب أسداس الليل</h1>
-    <p>أدخل وقت أذان المغرب ووقت أذان الفجر:</p>
-    <label for="sunset">وقت أذان المغرب:</label>
-    <input type="time" id="sunset">
-    <br>
-    <label for="sunrise">وقت أذان الفجر:</label>
-    <input type="time" id="sunrise">
-    <br>
-    <button onclick="calculateNight()">احسب</button>
-    <div class="results" id="results"></div>
-    <script src="script.js"></script>
+
+    <div class="container">
+        <h1>حساب أسداس الليل</h1>
+        <form id="nightForm">
+            <label for="sunset">وقت أذان المغرب (مثال: 5:47):</label>
+            <input type="text" id="sunset" name="sunset" required aria-label="وقت أذان المغرب">
+
+            <label for="sunrise">وقت أذان الفجر (مثال: 6:02):</label>
+            <input type="text" id="sunrise" name="sunrise" required aria-label="وقت أذان الفجر">
+
+            <button type="submit">حساب أسداس الليل</button>
+        </form>
+
+        <div id="result" class="result">
+            <h3>النتيجة:</h3>
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>السدس</th>
+                        <th>وقت البداية</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p id="nightDuration"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('nightForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const sunset = document.getElementById('sunset').value;
+            const sunrise = document.getElementById('sunrise').value;
+
+            // تحويل وقت الغروب إلى دقائق مع اعتبار أنه PM دائمًا
+            const [sunsetHours, sunsetMinutes] = sunset.split(':').map(Number);
+            const sunsetTotalMinutes = (sunsetHours + 12) * 60 + sunsetMinutes; // تحويل الساعة إلى PM
+
+            // تحويل وقت الشروق إلى دقائق مع اعتبار أنه AM دائمًا
+            const [sunriseHours, sunriseMinutes] = sunrise.split(':').map(Number);
+            const sunriseTotalMinutes = sunriseHours * 60 + sunriseMinutes; // تحويل الساعة إلى AM
+
+            let nightDurationMinutes;
+
+            if (sunsetTotalMinutes > sunriseTotalMinutes) {
+                nightDurationMinutes = (1440 - sunsetTotalMinutes) + sunriseTotalMinutes;  // عبر منتصف الليل
+            } else {
+                nightDurationMinutes = sunriseTotalMinutes - sunsetTotalMinutes;
+            }
+
+            const hours = Math.floor(nightDurationMinutes / 60);
+            const minutes = nightDurationMinutes % 60;
+
+            const parts = [];
+            const partDuration = nightDurationMinutes / 6;
+
+            for (let i = 0; i < 6; i++) {
+                const partStart = sunsetTotalMinutes + partDuration * i;
+                const partStartHours = Math.floor(partStart / 60);
+                const partStartMinutes = Math.floor(partStart % 60);
+                const period = partStartHours >= 12 ? 'PM' : 'AM';
+                const formattedTime = `${partStartHours % 12 || 12}:${partStartMinutes.toString().padStart(2, '0')} ${period}`;
+                parts.push({ part: i + 1, time: formattedTime });
+            }
+
+            // عرض النتائج في جدول
+            const resultTableBody = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
+            resultTableBody.innerHTML = ''; // مسح النتائج السابقة من الجدول
+
+            parts.forEach((part) => {
+                const row = resultTableBody.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                cell1.textContent = `السدس ${part.part}`;
+                cell2.textContent = part.time;
+            });
+
+            // عرض مدة الليل
+            const nightDurationText = `مدة الليل: ${hours} ساعة و ${minutes} دقيقة`;
+            document.getElementById('nightDuration').textContent = nightDurationText;
+
+            // إظهار الجدول
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
 </body>
 </html>

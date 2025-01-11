@@ -33,7 +33,7 @@ function calculateNight() {
     for (let i = 0; i < 6; i++) {
         const partStart = new Date(sunsetTime.getTime() + partDurationMs * i);
         const partTime = formatTimeAMPM(partStart); // تحويل الوقت إلى تنسيق AM/PM
-        parts.push(`الجزء ${i + 1} يبدأ في: ${partTime}`);
+        parts.push(`السدس ${i + 1} يبدأ في: ${partTime}`);
     }
 
     // عرض النتائج

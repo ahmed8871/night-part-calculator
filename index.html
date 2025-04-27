@@ -215,6 +215,7 @@
         </div>
     </div>
 
+        <!-- داخل الـ <script> الموجود في أسفل الصفحة -->
     <script>
         document.getElementById('nightForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -224,16 +225,15 @@
 
             // تحويل وقت الغروب إلى دقائق مع اعتبار أنه PM دائمًا
             const [sunsetHours, sunsetMinutes] = sunset.split(':').map(Number);
-            const sunsetTotalMinutes = (sunsetHours + 12) * 60 + sunsetMinutes; // تحويل الساعة إلى PM
+            const sunsetTotalMinutes = (sunsetHours + 12) * 60 + sunsetMinutes;
 
             // تحويل وقت الشروق إلى دقائق مع اعتبار أنه AM دائمًا
             const [sunriseHours, sunriseMinutes] = sunrise.split(':').map(Number);
-            const sunriseTotalMinutes = sunriseHours * 60 + sunriseMinutes; // تحويل الساعة إلى AM
+            const sunriseTotalMinutes = sunriseHours * 60 + sunriseMinutes;
 
             let nightDurationMinutes;
-
             if (sunsetTotalMinutes > sunriseTotalMinutes) {
-                nightDurationMinutes = (1440 - sunsetTotalMinutes) + sunriseTotalMinutes;  // عبر منتصف الليل
+                nightDurationMinutes = (1440 - sunsetTotalMinutes) + sunriseTotalMinutes;
             } else {
                 nightDurationMinutes = sunriseTotalMinutes - sunsetTotalMinutes;
             }
@@ -241,11 +241,22 @@
             const hours = Math.floor(nightDurationMinutes / 60);
             const minutes = nightDurationMinutes % 60;
 
-            const parts = [];
-            const partDuration = nightDurationMinutes / 6;
+            // حساب مدة كل سدس
+            const partDurationMinutes = nightDurationMinutes / 6;
+            const partHours = Math.floor(partDurationMinutes / 60);
+            const partMinutes = Math.floor(partDurationMinutes % 60);
 
+            // بناء نصوط النتائج
+            const nightDurationText = `مدة الليل: ${hours} ساعة و ${minutes} دقيقة`;
+            const partText = `مدة السدس الواحد: ${partHours} ساعة و ${partMinutes} دقيقة`;
+
+            // عرض النتائج في العنصر
+            document.getElementById('nightDuration').innerHTML = `${nightDurationText}<br>${partText}`;
+
+            // بقية الكود (عرض جدول السدس)
+            const parts = [];
             for (let i = 0; i < 6; i++) {
-                const partStart = sunsetTotalMinutes + partDuration * i;
+                const partStart = sunsetTotalMinutes + partDurationMinutes * i;
                 const partStartHours = Math.floor(partStart / 60);
                 const partStartMinutes = Math.floor(partStart % 60);
                 const period = partStartHours >= 12 ? 'PM' : 'AM';
@@ -253,10 +264,8 @@
                 parts.push({ part: i + 1, time: formattedTime });
             }
 
-            // عرض النتائج في جدول
             const resultTableBody = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
-            resultTableBody.innerHTML = ''; // مسح النتائج السابقة من الجدول
-
+            resultTableBody.innerHTML = '';
             parts.forEach((part) => {
                 const row = resultTableBody.insertRow();
                 const cell1 = row.insertCell(0);
@@ -265,13 +274,9 @@
                 cell2.textContent = part.time;
             });
 
-            // عرض مدة الليل
-            const nightDurationText = `مدة الليل: ${hours} ساعة و ${minutes} دقيقة`;
-            document.getElementById('nightDuration').textContent = nightDurationText;
-
-            // إظهار الجدول
             document.getElementById('result').style.display = 'block';
         });
     </script>
+
 </body>
 </html>
